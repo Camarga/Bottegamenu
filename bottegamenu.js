@@ -1,7 +1,7 @@
- function normalizar(texto) {
+function normalizar(texto) {
   return texto
-    .normalize('NFD')                // descompone letras y diacríticos
-    .replace(/[\u0300-\u036f]/g, '') // elimina los diacríticos
+    .normalize('NFD')                
+    .replace(/[\u0300-\u036f]/g, '') 
     .toLowerCase();
 }
 
@@ -116,14 +116,18 @@ alert(descripcion);
 // Función para elegir plato, confirmar y comentar
 function elegirYConfirmar(categoria, opciones) {
   const nombres = Object.keys(opciones);
-  let platoSeleccionado, precioSeleccionado;
-  const maxIntentos = 10;  
+  const maxIntentos = 10;
   let intentos = 0;
+  let platoSeleccionado, precioSeleccionado;
+
+  const listaOpciones = nombres
+    .map(n => `• ${n}: ${opciones[n]}€`)
+    .join("\n");
 
   while (intentos < maxIntentos) {
     let entrada = prompt(
-      `Elige un ${categoria} \n` +
-      nombres.map(n => `• ${n}`).join("\n")
+      `Elige un ${categoria}:\n` +
+      listaOpciones
     );
     if (entrada === null) {
       alert("Proceso cancelado. Recarga para empezar de nuevo.");
@@ -131,12 +135,15 @@ function elegirYConfirmar(categoria, opciones) {
     }
     entrada = normalizar(entrada.trim());
 
-    // Buscamos coincidencia por prefijo en cualquier palabra del nombre normalizado
-    const encontrado = nombres.find(nombre =>
-      normalizar(nombre)
-        .split(" ")
-        .some(pal => pal.startsWith(entrada))
-    );
+    // Búsqueda que acepta prefijo o nombre completo
+    const encontrado = nombres.find(nombre => {
+      const nombreNorm = normalizar(nombre);
+      const palabras = nombreNorm.split(" ");
+      return (
+        nombreNorm.startsWith(entrada) ||
+        palabras.some(pal => pal.startsWith(entrada))
+      );
+    });
 
     if (!encontrado) {
       intentos++;
@@ -145,7 +152,7 @@ function elegirYConfirmar(categoria, opciones) {
         continue;
       } else {
         alert("Has excedido el número de intentos. Recarga para empezar de nuevo.");
-        throw new Error("Demasiados intentos fallidos");
+        throw new Error("Demasios intentos fallidos");
       }
     }
 
@@ -180,3 +187,12 @@ alert(
   `TOTAL: ${total.toFixed(2)}€\n\n` +
   `¡Gracias por elegirnos, deseo que te guste!`
 );
+
+
+
+
+
+
+
+
+ 
